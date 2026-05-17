@@ -1,18 +1,21 @@
 // src/components/FileExplorer.tsx
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 interface FileExplorerProps {
     folders: any[];
     files: any[];
+    currentFolder?: { id: any; name: any; parentId: any } | null;
 }
 
-export default function FileExplorer({ folders, files }: FileExplorerProps) {
+export default function FileExplorer({ folders, files, currentFolder }: FileExplorerProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const [purgingId, setPurgingId] = useState<string | null>(null);
+    const [copiedId, setCopiedId] = useState<string | null>(null);
 
     const getFileExt = (fileName: string) => {
         return fileName.split('.').pop()?.toLowerCase() || 'unknown';
@@ -34,6 +37,52 @@ export default function FileExplorer({ folders, files }: FileExplorerProps) {
         const params = new URLSearchParams(searchParams?.toString() ?? '');
         params.set('preview', file.id);
         router.push(`/?${params.toString()}`);
+    };
+
+    const handleCopyLink = async (e: React.MouseEvent, fileId: string) => {
+        e.stopPropagation();
+
+        // 自动拼出完整的下载 API 绝对路径
+        const downloadUrl = `${window.location.origin}/api/download?file_id=${fileId}`;
+
+        try {
+            await navigator.clipboard.writeText(downloadUrl);
+            setCopiedId(fileId);
+            setTimeout(() => setCopiedId(null), 2000);
+        } catch (err) {
+            alert('复制失败');
+        }
+    };
+
+    const handlePurge = async (e: React.MouseEvent, id: string, type: 'file' | 'folder', name: string) => {
+        e.stopPropagation(); // 💥 熔断机制：坚决阻止触发底层文件的预览弹窗
+
+        const confirmMsg = type === 'folder'
+            ? `⚠️ [高危预警] 是否确认销毁文件夹 [${name}]？\n这将导致内部所有子文件元数据发生级联熔断，数据将永久无法读取！`
+            : `确认销毁文件 [${name}] 吗？`;
+
+        if (!window.confirm(confirmMsg)) return;
+
+        setPurgingId(id);
+        try {
+            const res = await fetch('/api/storage/purge', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, type }),
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.message || '删除请求被拒绝');
+            }
+
+            // 成功后刷新页面数据路由
+            router.refresh();
+        } catch (err: any) {
+            alert(`[PURGE_ERROR] >> ${err.message}`);
+        } finally {
+            setPurgingId(null);
+        }
     };
 
     return (
@@ -60,7 +109,15 @@ export default function FileExplorer({ folders, files }: FileExplorerProps) {
                             </Link>
                         </div>
                         <div className="col-span-3 md:col-span-2 text-gray-400">--</div>
-                        <div className="col-span-3 text-right pr-4 text-gray-400">-</div>
+                        <div className="col-span-3 text-right pr-4" onClick={(e) => e.stopPropagation()}>
+                            <button
+                                disabled={purgingId === folder.id}
+                                onClick={(e) => handlePurge(e, folder.id, 'folder', folder.name)}
+                                className="pangu-delete-btn inline-flex items-center text-red-600 font-medium hover:text-red-700 hover:underline bg-red-50 hover:bg-red-100 px-2.5 py-1 rounded transition text-xs disabled:opacity-50"
+                            >
+                                {purgingId === folder.id ? '⚡' : '× 删除'}
+                            </button>
+                        </div>
                     </div>
                 ))}
 
@@ -86,7 +143,13 @@ export default function FileExplorer({ folders, files }: FileExplorerProps) {
                             <div className="pangu-file-size col-span-3 md:col-span-2 text-gray-500">
                                 {(file.size / 1024 / 1024).toFixed(2)} MB
                             </div>
-                            <div className="col-span-3 text-right pr-4" onClick={(e) => e.stopPropagation()}>
+                            <div className="col-span-3 text-right pr-4 flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                                <button
+                                    onClick={(e) => handleCopyLink(e, file.id)}
+                                    className="pangu-copy-btn text-xs text-blue-600 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition font-medium"
+                                >
+                                    {copiedId === file.id ? '✓ 已复制' : '复制下载链接'}
+                                </button>
                                 <a
                                     href={`/api/download?file_id=${file.id}`}
                                     target="_blank"
@@ -95,6 +158,13 @@ export default function FileExplorer({ folders, files }: FileExplorerProps) {
                                 >
                                     ↓ 下载
                                 </a>
+                                <button
+                                    disabled={purgingId === file.id}
+                                    onClick={(e) => handlePurge(e, file.id, 'file', file.name)}
+                                    className="pangu-delete-btn inline-flex items-center text-red-600 font-medium hover:text-red-700 hover:underline bg-red-50 hover:bg-red-100 px-2.5 py-1 rounded transition text-xs disabled:opacity-50"
+                                >
+                                    {purgingId === file.id ? '⚡' : '× 删除'}
+                                </button>
                             </div>
                         </div>
                     );

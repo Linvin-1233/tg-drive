@@ -35,6 +35,26 @@ export default async function Page({ searchParams }: PageProps) {
         console.error("读取 _config.yml 失败，降级为 default 主题:", e);
     }
 
+    let currentFolderData: { id: any; name: any; parentId: any } | null = null;
+    if (currentDir) {
+        try {
+            const folderResult = await queryD1(
+                'SELECT id, name, parent_id FROM folders WHERE id = ? LIMIT 1',
+                [currentDir]
+            );
+            if (folderResult && folderResult.length > 0) {
+                // 2. 🎯 确保这里的赋值字段和上面声明的类型完全对齐
+                currentFolderData = {
+                    id: folderResult[0].id,
+                    name: folderResult[0].name,
+                    parentId: folderResult[0].parent_id
+                };
+            }
+        } catch (e) {
+            console.error("获取当前目录元数据失败:", e);
+        }
+    }
+
     let selectedFile: any = null;
     if (previewId) {
         const results = await queryD1('SELECT * FROM files WHERE id = ? LIMIT 1', [previewId]);
@@ -66,8 +86,18 @@ export default async function Page({ searchParams }: PageProps) {
                 </div>
 
                 {/* 注入固定 BEM: pangu-breadcrumb */}
-                <div className="pangu-breadcrumb mb-4 text-sm text-gray-500">
-                    <Link href="/" className="hover:text-blue-600 font-medium">🏠 我的网盘</Link>
+                <div className="pangu-explorer-breadcrumbs flex items-center gap-2 text-sm text-gray-500 pl-1 font-mono">
+                    <Link href="/" className="pangu-breadcrumb-item hover:text-blue-600 font-semibold transition">
+                        ROOT
+                    </Link>
+                    {currentFolderData && (
+                        <>
+                            <span className="pangu-breadcrumb-separator text-gray-400 select-none">/</span>
+                            <span className="pangu-breadcrumb-current text-gray-800 font-bold max-w-[200px] truncate">
+                        {currentFolderData.name}
+                    </span>
+                        </>
+                    )}
                 </div>
 
                 {/* 文件列表流式容器 */}
@@ -77,7 +107,11 @@ export default async function Page({ searchParams }: PageProps) {
                         <div className="h-10 bg-gray-100 rounded"></div>
                     </div>
                 }>
-                    <FileExplorerContainer currentDir={currentDir} q={q} />
+                    <FileExplorerContainer
+                        currentDir={currentDir}
+                        q={q}
+                        currentFolder={currentFolderData}
+                    />
                 </Suspense>
 
                 {/* 预览弹窗 */}
