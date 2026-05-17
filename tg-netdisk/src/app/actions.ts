@@ -1,7 +1,7 @@
 // src/app/actions.ts
 'use server';
 
-import { queryD1 } from '../lib/db';
+import { queryD1 } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 
 // 创建文件夹

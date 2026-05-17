@@ -1,40 +1,56 @@
 // src/app/api/download/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { queryD1 } from '@/lib/db';
 
-export async function GET(request: NextRequest) {
-    const { searchParams } = new URL(request.url);
-    const tgFileId = searchParams.get('file_id');
+export async function GET(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+    const fileId = searchParams.get('file_id');
 
-    if (!tgFileId) {
-        return NextResponse.json({ error: '缺少参数 file_id' }, { status: 400 });
-    }
+    if (!fileId) return NextResponse.json({ error: '缺少参数 file_id' }, { status: 400 });
 
     try {
-        const botToken = process.env.TG_BOT_TOKEN;
-
-        // 1. 请求 TG 服务器换取文件路径 (File Path)
-        const getFileResponse = await fetch(`https://api.telegram.org/bot${botToken}/getFile?file_id=${tgFileId}`);
-        const fileData = await getFileResponse.json();
-
-        if (!fileData.ok) {
-            return NextResponse.json({ error: '无法从 Telegram 换取文件路径' }, { status: 500 });
+        // 从全新的 cdn_urls 字段中捞取数据
+        const fileRecords = await queryD1('SELECT name, cdn_urls FROM files WHERE id = ? LIMIT 1', [fileId]) as any[];
+        if (!fileRecords || fileRecords.length === 0) {
+            return NextResponse.json({ error: '文件不存在或已被物理删除' }, { status: 404 });
         }
 
-        const filePath = fileData.result.file_path;
-        // 2. 组装最终的高速物理下载直链
-        const downloadUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
+        const { name: realFileName, cdn_urls: allUrlsStr } = fileRecords[0];
+        const urls = allUrlsStr.split(',');
 
-        // 3. 抓取远程文件流
-        const fileStreamResponse = await fetch(downloadUrl);
+        // 拼接转泵
+        const responseStream = new ReadableStream({
+            async start(controller) {
+                try {
+                    for (let i = 0; i < urls.length; i++) {
+                        const chunkRes = await fetch(urls[i]);
+                        if (!chunkRes.ok || !chunkRes.body) {
+                            throw new Error(`Discord CDN 切片拉取失败: 第 ${i + 1} 块`);
+                        }
 
-        // 4. 以流（Stream）的形式实时泵给用户浏览器，不占用 Vercel 内存
-        return new Response(fileStreamResponse.body, {
+                        const reader = chunkRes.body.getReader();
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            if (value) controller.enqueue(value);
+                            if (done) break;
+                        }
+                    }
+                    controller.close();
+                } catch (err: any) {
+                    controller.error(err);
+                }
+            }
+        });
+
+        return new Response(responseStream, {
             headers: {
-                'Content-Type': fileStreamResponse.headers.get('Content-Type') || 'application/octet-stream',
-                'Content-Disposition': `attachment; filename="download-${Date.now()}"`, // 浏览器直接弹出下载
+                'Content-Type': 'application/octet-stream',
+                'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(realFileName)}`,
+                'Cache-Control': 'no-cache',
             },
         });
-    } catch (err: any) {
-        return NextResponse.json({ error: '中转下载失败: ' + err.message }, { status: 500 });
+
+    } catch (error: any) {
+        return NextResponse.json({ error: '流中转失败: ' + error.message }, { status: 500 });
     }
 }

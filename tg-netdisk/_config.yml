@@ -1,0 +1,8 @@
+# 配置文件
+
+# 视觉主题配置
+# 可选值:
+#   - default   (默认基本白色)
+#   - cyberpunk (赛博风格)
+
+theme: default

@@ -1,0 +1,523 @@
+
+
+
+.pangu-dashboard[data-theme="cyberpunk"] {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+    position: relative;
+    overflow-x: hidden;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"]::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+    background-image:
+            linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px) !important;
+    background-size: 40px 40px !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"]::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 12% !important;
+    left: 0; right: 0 !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.2), rgba(64, 181, 173, 0.4), rgba(239, 68, 68, 0.2), transparent) !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+}
+
+
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-toolbar {
+    position: relative !important;
+    z-index: 10 !important;
+    background-color: #000000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 0px !important;
+    box-shadow: none !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-toolbar input[type="text"] {
+    background-color: #000000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-radius: 0px !important;
+    font-size: 11px !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-toolbar input[type="text"]:focus {
+    border-color: #40B5AD !important;
+    outline: none !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-create-folder-form input {
+    background-color: #000000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-radius: 0px !important;
+    font-size: 11px !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-toolbar button[type="submit"],
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-toolbar .bg-blue-600 {
+    background-color: #40B5AD !important;
+    color: #000000 !important;
+    font-weight: 900 !important;
+    border-radius: 0px !important;
+    letter-spacing: 0.05em !important;
+    font-size: 11px !important;
+    transition: opacity 0.2s !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-toolbar button[type="submit"]:hover,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-toolbar .bg-blue-600:hover {
+    opacity: 0.9 !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-breadcrumb {
+    border-left: 2px solid #ef4444 !important;
+    padding-left: 1rem !important;
+    font-style: italic !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-breadcrumb a {
+    color: #ffffff !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-breadcrumb a:hover {
+    color: #40B5AD !important;
+}
+
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-modal-mask {
+    background-color: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-modal-body {
+    background-color: #000000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 0px !important;
+    position: relative !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-modal-header {
+    background-color: #000000 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 1rem 1.5rem !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-modal-title {
+    color: #ffffff !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.03em !important;
+}
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-modal-title::after {
+    content: " // CORE_SYS_ACTIVE" !important;
+    font-size: 8px !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+    letter-spacing: 0.1em !important;
+    font-weight: normal !important;
+    margin-left: 8px !important;
+}
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-modal-close-btn {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-modal-close-btn:hover {
+    color: #ef4444 !important;
+}
+
+
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-modal-mask[data-ext="mp4"] .pangu-modal-body {
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-preview-audio-wrapper {
+    background: #000000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    position: relative !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-preview-audio-wrapper::before {
+    content: "BUFFER_LOAD: OPTIMAL // 0x801_DEPLOYED" !important;
+    position: absolute !important;
+    top: 6px; right: 12px !important;
+    font-size: 8px !important;
+    color: #ef4444 !important;
+    letter-spacing: 0.05em !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-preview-audio-disc {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-preview-audio-title {
+    color: #ffffff !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-preview-code-wrapper {
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    background-color: #000000 !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-preview-header {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 11px !important;
+    font-family: ui-monospace, monospace !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-code-body {
+    background-color: #0d0e12 !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox {
+    background-color: transparent !important;
+    font-size: 13px !important;
+    line-height: 1.65 !important;
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Consolas, monospace !important;
+    color: #99aab5 !important;
+    padding: 1.25rem !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox * {
+    color: inherit !important;
+    background-color: transparent !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .react-syntax-highlighter-line-number {
+    color: rgba(255, 255, 255, 0.2) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding-right: 14px !important;
+    margin-right: 14px !important;
+    display: inline-block !important;
+    text-align: right !important;
+    min-width: 2rem !important;
+    font-style: normal !important;
+}
+
+
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.comment,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.prolog,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.doctype,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.cdata {
+    color: #6a737d !important;
+    font-style: italic !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.punctuation {
+    color: #99aab5 !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.keyword,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.atrule,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.selector {
+    color: #ffb454 !important;
+    font-weight: 600 !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.string,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.regex,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.char,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.attr-value {
+    color: #7fd962 !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.function,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.class-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.maybe-class-name {
+    color: #39bae6 !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.variable,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.property,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.constant,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.boolean,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.number {
+    color: #f8f9fa !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.operator,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.entity,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.url,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.tag {
+    color: #f07178 !important;
+}
+
+
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-preview-mask {
+    background: linear-gradient(to top, #0d0e12 20%, rgba(13, 14, 18, 0.95) 60%, transparent 100%) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .mask-text {
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-family: ui-monospace, monospace !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .truncated-count {
+    color: #ffb454 !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .override-btn {
+    background: transparent !important;
+    border: 1px solid rgba(240, 113, 120, 0.4) !important;
+    color: #f07178 !important;
+    border-radius: 0px !important;
+    font-size: 11px !important;
+    font-family: ui-monospace, monospace !important;
+    letter-spacing: 0.05em !important;
+    padding: 4px 14px !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .override-btn:hover {
+    border-color: #f07178 !important;
+    background-color: rgba(240, 113, 120, 0.08) !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-preview-markdown-wrapper {
+    background-color: #000000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-preview-markdown-wrapper h1,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-preview-markdown-wrapper h2,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-preview-markdown-wrapper h3 {
+    color: #ffffff !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    font-weight: 900 !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-preview-markdown-wrapper code {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #40B5AD !important;
+    border: none !important;
+}
+
+
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-container {
+    background-color: #000000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 0px !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-loading,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-skeleton,
+.pangu-dashboard[data-theme="cyberpunk"] [class*="explorer-loading"],
+.pangu-dashboard[data-theme="cyberpunk"] [class*="explorer-skeleton"] {
+    background-color: #000000 !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-header {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.3) !important;
+    font-size: 10px !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-list {
+    background-color: #000000 !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-list > div {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+    background-color: transparent !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-folder-row,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row {
+    background-color: transparent !important;
+    transition: background-color 0.15s ease !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-folder-row:hover,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row:hover {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-row-icon {
+    filter: grayscale(0.8) brightness(0.9) !important;
+    font-size: 1rem !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-folder-link {
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-folder-row:hover .pangu-folder-link {
+    color: #40B5AD !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-file-name {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-weight: normal !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row:hover .pangu-file-name {
+    color: #ffffff !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-file-size {
+    color: rgba(255, 255, 255, 0.3) !important;
+    font-family: monospace !important;
+    font-size: 11px !important;
+}
+
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="mp4"]:hover .pangu-file-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="webm"]:hover .pangu-file-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="mkv"]:hover .pangu-file-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="mov"]:hover .pangu-file-name {
+    color: #ffb454 !important;
+}
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="mp3"]:hover .pangu-file-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="wav"]:hover .pangu-file-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="flac"]:hover .pangu-file-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="m4a"]:hover .pangu-file-name {
+    color: #a855f7 !important;
+}
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="md"]:hover .pangu-file-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="txt"]:hover .pangu-file-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="js"]:hover .pangu-file-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="ts"]:hover .pangu-file-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="py"]:hover .pangu-file-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row[data-ext="json"]:hover .pangu-file-name {
+    color: #39bae6 !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-download-btn {
+    background: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    border-radius: 0px !important;
+    font-size: 10px !important;
+    font-family: monospace !important;
+    letter-spacing: 0.05em !important;
+    padding: 2px 8px !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-file-row:hover .pangu-download-btn {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-download-btn:hover {
+    border-color: #39bae6 !important;
+    color: #39bae6 !important;
+    background-color: rgba(64, 181, 173, 0.05) !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-explorer-empty {
+    background-color: #000000 !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+    font-family: monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    border: 1px dashed rgba(255, 255, 255, 0.03) !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox[style],
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox [style],
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox div,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox span {
+    color: #99aab5 !important;
+    text-shadow: none !important;
+    background: transparent !important;
+}
+
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.comment {
+    color: #6a737d !important;
+    font-style: italic !important;
+}
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.keyword,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.atrule,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.selector {
+    color: #ffb454 !important;
+    font-weight: 600 !important;
+}
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.string,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.regex,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.attr-value {
+    color: #7fd962 !important;
+}
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.function,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.class-name,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.maybe-class-name {
+    color: #39bae6 !important;
+}
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.variable,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.property,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.constant,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.boolean,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.number {
+    color: #f8f9fa !important;
+}
+
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.operator,
+.pangu-dashboard[data-theme="cyberpunk"] .pangu-prism-sandbox .token.tag {
+    color: #f07178 !important;
+}
