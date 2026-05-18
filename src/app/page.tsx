@@ -6,8 +6,6 @@ import Uploader from './uploader';
 import Link from 'next/link';
 import FileExplorerContainer from '@/components/FileExplorerContainer';
 import PreviewModal from '@/components/PreviewModal';
-
-// 引入 Node.js 文件系统和 YAML 解析器
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
@@ -43,7 +41,7 @@ export default async function Page({ searchParams }: PageProps) {
                 [currentDir]
             );
             if (folderResult && folderResult.length > 0) {
-                // 2. 🎯 确保这里的赋值字段和上面声明的类型完全对齐
+                // 2. 确保这里的赋值字段和上面声明的类型完全对齐
                 currentFolderData = {
                     id: folderResult[0].id,
                     name: folderResult[0].name,

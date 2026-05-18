@@ -62,7 +62,7 @@ export default function Uploader({ currentDir }: { currentDir: string | null }) 
                         const retryAfter = data.retryAfter || (Math.pow(2, retryCount) * 3);
                         const waitMs = (retryAfter * 1000) + 1500; // 遵循官方指示 + 1.5秒缓冲
 
-                        console.warn(`[强行捕获 429] 块 ${index + 1} 踩雷。sleep ${(waitMs / 1000).toFixed(1)} 秒...`);
+                        console.warn(`块 ${index + 1} 错误。sleep ${(waitMs / 1000).toFixed(1)} 秒...`);
                         setStatus(`块 ${index + 1} 被限制`);
 
                         await sleep(waitMs);
@@ -72,7 +72,7 @@ export default function Uploader({ currentDir }: { currentDir: string | null }) 
                     }
                 }
 
-                // 🎯 2. 解析正常响应
+                // 2. 解析正常响应
                 const data = await res.json().catch(() => ({}));
 
                 // 处理其他非 429 的异常（比如 500, 504 等）
@@ -131,7 +131,7 @@ export default function Uploader({ currentDir }: { currentDir: string | null }) 
 
             if (!commitRes.ok) throw new Error('提交 D1 失败');
 
-            setStatus('🎉 大文件抗风控并发直传成功！');
+            setStatus('传输成功');
             router.refresh();
         } catch (error: any) {
             console.error(error);
@@ -143,20 +143,20 @@ export default function Uploader({ currentDir }: { currentDir: string | null }) 
     };
 
     return (
-        <div className="flex items-center gap-3">
+        <div className="pangu-upload-container flex items-center gap-3">
             <input
                 type="file"
-                className="text-xs text-gray-500 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 file:cursor-pointer"
+                className="pangu-upload-input text-xs text-gray-500 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 file:cursor-pointer"
                 onChange={handleUpload}
             />
             {status && (
                 <div className="flex items-center gap-2">
                     {progress !== null && (
-                        <div className="w-24 bg-gray-200 h-1.5 rounded-full overflow-hidden">
-                            <div className="bg-blue-600 h-full transition-all duration-150" style={{ width: `${progress}%` }}></div>
+                        <div className="pangu-status-container w-24 bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                            <div className="pangu-status bg-blue-600 h-full transition-all duration-150" style={{ width: `${progress}%` }}></div>
                         </div>
                     )}
-                    <span className="text-xs text-blue-600 font-medium">{status}</span>
+                    <span className="pangu-status-text text-xs text-blue-600 font-medium">{status}</span>
                 </div>
             )}
         </div>
