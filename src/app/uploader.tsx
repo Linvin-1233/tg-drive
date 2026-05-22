@@ -282,12 +282,11 @@ export default function Uploader({ currentDir }: { currentDir: string | null }) 
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 />
                 <button type="button" className="pangu-upload-input text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2.5 rounded-lg transition-colors cursor-pointer w-full sm:w-auto text-center block">
-                    🚀 上传文件
+                    ↑ 上传文件
                 </button>
             </div>
 
             {fileList.length > 0 && (
-                /* ⚡ 响应式重构核心：移动端下自动切换为通宽，靠底贴紧，完美阻断侧向溢出 */
                 <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:bottom-6 z-40 w-auto md:w-96 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden transition-all duration-300 flex flex-col max-w-full">
                     <div className="bg-gray-900 text-white px-4 py-3 flex items-center justify-between select-none">
                         <div className="text-xs font-medium truncate flex-1 pr-2">
