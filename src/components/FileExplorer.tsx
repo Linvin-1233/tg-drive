@@ -1,7 +1,7 @@
 // src/components/FileExplorer.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -16,25 +16,63 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
     const searchParams = useSearchParams();
     const [purgingId, setPurgingId] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null);
+
+    const activeFolderId = currentFolder?.id || searchParams?.get('currentDir') || null;
+
+    // 离开当前文件夹、刷新、或关闭网页时自动擦除 Cookie
+    useEffect(() => {
+        if (!activeFolderId) return;
+
+        const clearFolderAccess = () => {
+            fetch(`/api/folder/logout?id=${activeFolderId}`, {
+                method: 'POST',
+                keepalive: true
+            });
+        };
+
+        window.addEventListener('beforeunload', clearFolderAccess);
+        return () => {
+            window.removeEventListener('beforeunload', clearFolderAccess);
+            clearFolderAccess();
+        };
+    }, [activeFolderId]);
+
+    // 请求移动文件位置
+    const handleMoveFile = async (fileId: string, targetFolderId: string) => {
+        try {
+            const res = await fetch('/api/storage/move', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fileId, targetFolderId }),
+            });
+
+            if (!res.ok) throw new Error('移动文件失败');
+
+            // 成功后无刷新重载当前服务器组件数据
+            router.refresh();
+        } catch (err: any) {
+            alert(`[MOVE_ERROR] >> ${err.message}`);
+        }
+    };
 
     const getFileExt = (fileName: string) => {
         return fileName.split('.').pop()?.toLowerCase() || 'unknown';
     };
 
     const getFileIcon = (ext: string) => {
-        // 基础统一的 SVG 样式类名
         const baseClass = "h-5 w-5 flex-shrink-0 transition-transform group-hover:scale-110 duration-150";
 
-        // 1. 图片类：采用绿色调
+        // 图片类
         if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-emerald-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a1 1 0 011.414 0L16 17m0 0l1-1m-1 1k-3-3m-2 3h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a1 1 0 011.414 0L16 17m0 0l1-1m-1 1l-3-3m-2 3h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
             );
         }
 
-        // 2. 视频类：采用紫色调
+        // 视频类
         if (['mp4', 'webm', 'mov', 'mkv'].includes(ext)) {
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-purple-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -43,7 +81,7 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
             );
         }
 
-        // 3. 音频类：采用粉红/品红调
+        // 音频类
         if (['mp3', 'wav', 'aac', 'flac', 'm4a'].includes(ext)) {
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-pink-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -52,7 +90,7 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
             );
         }
 
-        // 4. 代码类：采用琥珀/橙色调
+        // 代码类
         if (['js', 'ts', 'py', 'json', 'html', 'css', 'go', 'rust', 'sh'].includes(ext)) {
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-amber-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -61,7 +99,7 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
             );
         }
 
-        // 5. 文档类（Markdown/TXT）：采用淡蓝调
+        // 文档类
         if (['md', 'txt'].includes(ext)) {
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-sky-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -70,7 +108,7 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
             );
         }
 
-        // 6. 办公表格/演示类（Office等）：采用靛蓝调
+        // 办公类
         if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(ext)) {
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-indigo-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -79,7 +117,7 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
             );
         }
 
-        // 7. PDF 专用：采用红色调
+        // PDF 类
         if (['pdf'].includes(ext)) {
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-rose-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -88,7 +126,7 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
             );
         }
 
-        // 8. 压缩包类：采用浅灰黄调
+        // 压缩包类
         if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) {
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-yellow-600`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -97,7 +135,7 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
             );
         }
 
-        // 9. 兜底未知文件：采用中灰调
+        // 默认兜底
         return (
             <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-gray-400`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -113,10 +151,7 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
 
     const handleCopyLink = async (e: React.MouseEvent, fileId: string) => {
         e.stopPropagation();
-
-        // 自动拼出完整的下载 API 绝对路径
         const downloadUrl = `${window.location.origin}/api/download?file_id=${fileId}`;
-
         try {
             await navigator.clipboard.writeText(downloadUrl);
             setCopiedId(fileId);
@@ -148,7 +183,6 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
                 throw new Error(data.message || '删除请求被拒绝');
             }
 
-            // 成功后刷新页面数据路由
             router.refresh();
         } catch (err: any) {
             alert(`[PURGE_ERROR] >> ${err.message}`);
@@ -158,52 +192,73 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
     };
 
     return (
-        // 外部钩子: pangu-explorer-container
         <div className="pangu-explorer-container bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-
-            {/* 表头 - 外部钩子: pangu-explorer-header */}
             <div className="pangu-explorer-header grid grid-cols-12 p-3 text-xs font-bold text-gray-400 bg-gray-50 border-b border-gray-100">
                 <div className="col-span-6 md:col-span-7 pl-2">名称</div>
                 <div className="col-span-3 md:col-span-2">大小</div>
                 <div className="col-span-3 text-right pr-4">操作</div>
             </div>
 
-            {/* 列表大合集 - 外部钩子: pangu-explorer-list */}
             <div className="pangu-explorer-list divide-y divide-gray-100">
-
-                {/* 1. 文件夹列表 - 外部钩子: pangu-explorer-folder-row */}
-                {folders?.map((folder: any) => (
-                    <div key={folder.id} className="pangu-explorer-folder-row grid grid-cols-12 p-3 text-sm hover:bg-blue-50/50 items-center transition group">
-                        <div className="col-span-6 md:col-span-7 flex items-center gap-3 pl-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0 text-blue-500 transition-transform group-hover:scale-110 duration-150" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                            </svg>
-                            <Link href={`/?currentDir=${folder.id}`} className="pangu-folder-link text-blue-600 hover:underline font-semibold truncate">
-                                {folder.name}
-                            </Link>
+                {/* 1. 文件夹列表 - 作为投放接收端 (Drop Target) */}
+                {folders?.map((folder: any) => {
+                    const isDragOver = dragOverFolderId === folder.id;
+                    return (
+                        <div
+                            key={folder.id}
+                            // ⚡ 挂载 HTML5 拖拽目标核心事件监听器
+                            onDragOver={(e) => {
+                                e.preventDefault(); // 阻止浏览器默认拦截行为，允许拖放投放
+                                setDragOverFolderId(folder.id);
+                            }}
+                            onDragLeave={() => setDragOverFolderId(null)}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                setDragOverFolderId(null);
+                                const fileId = e.dataTransfer.getData('text/plain');
+                                if (fileId) handleMoveFile(fileId, folder.id);
+                            }}
+                            // ⚡ 配合拖拽激活样式：边框变深蓝虚线、背景微调、微缩营造微弱重力触觉
+                            className={`pangu-explorer-folder-row grid grid-cols-12 p-3 text-sm items-center transition-all duration-150 group border border-transparent
+                                ${isDragOver ? 'bg-blue-100/70 border-blue-400 border-dashed rounded-lg scale-[0.99] mx-1' : 'hover:bg-blue-50/50'}`}
+                        >
+                            <div className="col-span-6 md:col-span-7 flex items-center gap-3 pl-2 pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0 text-blue-500 transition-transform group-hover:scale-110 duration-150" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                                </svg>
+                                <Link href={`/?currentDir=${folder.id}`} className="pangu-folder-link text-blue-600 hover:underline font-semibold truncate pointer-events-auto">
+                                    {folder.name}
+                                </Link>
+                            </div>
+                            <div className="col-span-3 md:col-span-2 text-gray-400 select-none">--</div>
+                            <div className="col-span-3 text-right pr-4" onClick={(e) => e.stopPropagation()}>
+                                <button
+                                    disabled={purgingId === folder.id}
+                                    onClick={(e) => handlePurge(e, folder.id, 'folder', folder.name)}
+                                    className="pangu-delete-btn inline-flex items-center text-red-600 font-medium hover:text-red-700 hover:underline bg-red-50 hover:bg-red-100 px-2.5 py-1 rounded transition text-xs disabled:opacity-50"
+                                >
+                                    {purgingId === folder.id ? '⚡' : '× 删除'}
+                                </button>
+                            </div>
                         </div>
-                        <div className="col-span-3 md:col-span-2 text-gray-400">--</div>
-                        <div className="col-span-3 text-right pr-4" onClick={(e) => e.stopPropagation()}>
-                            <button
-                                disabled={purgingId === folder.id}
-                                onClick={(e) => handlePurge(e, folder.id, 'folder', folder.name)}
-                                className="pangu-delete-btn inline-flex items-center text-red-600 font-medium hover:text-red-700 hover:underline bg-red-50 hover:bg-red-100 px-2.5 py-1 rounded transition text-xs disabled:opacity-50"
-                            >
-                                {purgingId === folder.id ? '⚡' : '× 删除'}
-                            </button>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
 
-                {/* 2. 文件列表 - 外部钩子: pangu-explorer-file-row + data-ext 状态透传 */}
+                {/* 2. 文件列表 - 作为拖拽输出端 (Drag Source) */}
                 {files?.map((file: any) => {
                     const ext = getFileExt(file.name);
                     return (
                         <div
                             key={file.id}
                             onClick={() => handleFileClick(file)}
-                            // 带上 data-ext 标签，外部开发者可以针对不同的文件类型写差异化高亮样式
-                            className="pangu-explorer-file-row grid grid-cols-12 p-3 text-sm hover:bg-gray-50/80 items-center transition cursor-pointer group"
+                            // ⚡ 启用 HTML5 原生可拖拽容器属性
+                            draggable={true}
+                            onDragStart={(e) => {
+                                e.dataTransfer.setData('text/plain', file.id);
+                                e.dataTransfer.effectAllowed = "move";
+                            }
+                        }
+                            className="pangu-explorer-file-row grid grid-cols-12 p-3 text-sm hover:bg-gray-50/80 items-center transition cursor-grab active:cursor-grabbing group"
                             data-ext={ext}
                         >
                             <div className="col-span-6 md:col-span-7 flex items-center gap-3 pl-2">
