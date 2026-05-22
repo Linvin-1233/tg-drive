@@ -22,15 +22,87 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
     };
 
     const getFileIcon = (ext: string) => {
-        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return '🖼️';
-        if (['mp4', 'webm', 'mov', 'mkv'].includes(ext)) return '🎬';
-        if (['mp3', 'wav', 'aac', 'flac', 'm4a'].includes(ext)) return '🎵';
-        if (['md', 'txt'].includes(ext)) return '📝';
-        if (['js', 'ts', 'py', 'json', 'html', 'css'].includes(ext)) return '💻';
-        if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(ext)) return '📊';
-        if (['pdf'].includes(ext)) return '📕';
-        if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return '📦';
-        return '📄';
+        // 基础统一的 SVG 样式类名
+        const baseClass = "h-5 w-5 flex-shrink-0 transition-transform group-hover:scale-110 duration-150";
+
+        // 1. 图片类：采用绿色调
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-emerald-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a1 1 0 011.414 0L16 17m0 0l1-1m-1 1k-3-3m-2 3h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            );
+        }
+
+        // 2. 视频类：采用紫色调
+        if (['mp4', 'webm', 'mov', 'mkv'].includes(ext)) {
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-purple-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+            );
+        }
+
+        // 3. 音频类：采用粉红/品红调
+        if (['mp3', 'wav', 'aac', 'flac', 'm4a'].includes(ext)) {
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-pink-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+            );
+        }
+
+        // 4. 代码类：采用琥珀/橙色调
+        if (['js', 'ts', 'py', 'json', 'html', 'css', 'go', 'rust', 'sh'].includes(ext)) {
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-amber-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+            );
+        }
+
+        // 5. 文档类（Markdown/TXT）：采用淡蓝调
+        if (['md', 'txt'].includes(ext)) {
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-sky-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            );
+        }
+
+        // 6. 办公表格/演示类（Office等）：采用靛蓝调
+        if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(ext)) {
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-indigo-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            );
+        }
+
+        // 7. PDF 专用：采用红色调
+        if (['pdf'].includes(ext)) {
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-rose-500`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+            );
+        }
+
+        // 8. 压缩包类：采用浅灰黄调
+        if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) {
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-yellow-600`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+            );
+        }
+
+        // 9. 兜底未知文件：采用中灰调
+        return (
+            <svg xmlns="http://www.w3.org/2000/svg" className={`${baseClass} text-gray-400`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+        );
     };
 
     const handleFileClick = (file: any) => {
@@ -55,11 +127,11 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
     };
 
     const handlePurge = async (e: React.MouseEvent, id: string, type: 'file' | 'folder', name: string) => {
-        e.stopPropagation(); // 💥 熔断机制：坚决阻止触发底层文件的预览弹窗
+        e.stopPropagation();
 
         const confirmMsg = type === 'folder'
-            ? `⚠️ [高危预警] 是否确认销毁文件夹 [${name}]？\n这将导致内部所有子文件元数据发生级联熔断，数据将永久无法读取！`
-            : `确认销毁文件 [${name}] 吗？`;
+            ? `是否确认删除文件夹 [${name}]？\n这将导致文件夹内所有文件将永久删除`
+            : `确认删除文件 [${name}] 吗？`;
 
         if (!window.confirm(confirmMsg)) return;
 
@@ -103,7 +175,9 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
                 {folders?.map((folder: any) => (
                     <div key={folder.id} className="pangu-explorer-folder-row grid grid-cols-12 p-3 text-sm hover:bg-blue-50/50 items-center transition group">
                         <div className="col-span-6 md:col-span-7 flex items-center gap-3 pl-2">
-                            <span className="pangu-row-icon text-xl select-none">📁</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0 text-blue-500 transition-transform group-hover:scale-110 duration-150" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                            </svg>
                             <Link href={`/?currentDir=${folder.id}`} className="pangu-folder-link text-blue-600 hover:underline font-semibold truncate">
                                 {folder.name}
                             </Link>
@@ -172,7 +246,9 @@ export default function FileExplorer({ folders, files, currentFolder }: FileExpl
 
                 {(!folders || !files || (folders.length === 0 && files.length === 0)) && (
                     <div className="pangu-explorer-empty p-12 text-center text-gray-400 text-sm">
-                        <p className="text-3xl mb-2">📥</p>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto text-gray-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
                         空空如也，赶快上传一个大文件吧
                     </div>
                 )}

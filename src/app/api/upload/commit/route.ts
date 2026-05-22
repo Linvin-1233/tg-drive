@@ -1,68 +1,68 @@
-// src/app/api/upload/commit/route.ts
+// src/app/api/upload/commit-tg/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { queryD1 } from '@/lib/db';
 
-/**
- * 从 Discord CDN 链接中解析 channel_id 和 message_id
- * 标准 URL 格式: https://cdn.discordapp.com/attachments/{channel_id}/{message_id}/{filename}
- */
-function extractDiscordIdentifiers(urlStr: string) {
-    try {
-        const urlObj = new URL(urlStr.trim());
-        const pathParts = urlObj.pathname.split('/').filter(Boolean);
-
-        if (pathParts[0] === 'attachments' && pathParts.length >= 3) {
-            return {
-                channelId: pathParts[1],
-                messageId: pathParts[2]
-            };
-        }
-        return { channelId: null, messageId: null };
-    } catch (e) {
-        return { channelId: null, messageId: null };
-    }
-}
-
 export async function POST(req: NextRequest) {
     try {
-        const { name, size, folderId, urls } = await req.json();
+        // 1. 承接前端传过来的全新分布式切片元数据
+        const { fileId, name, size, folderId, chunks } = await req.json();
 
-        if (!name || !urls || !Array.isArray(urls) || urls.length === 0) {
-            return NextResponse.json({ success: false, error: '未收到合法的切片链接列表' }, { status: 400 });
+        // 2. 严格的参数校验熔断机制
+        if (!fileId || !name || !chunks || !Array.isArray(chunks) || chunks.length === 0) {
+            return NextResponse.json(
+                { success: false, error: '未收到合法的 Telegram 切片元数据' },
+                { status: 400 }
+            );
         }
 
-        // 规范化 folderId 字段，空值转换为 null 存储
+        // 验证首个分片，确保核心凭证字段没有丢
+        const firstChunk = chunks[0];
+        if (firstChunk.tg_group_id === undefined || firstChunk.tg_message_id === undefined) {
+            return NextResponse.json(
+                { success: false, error: '切片凭证(群组ID/消息ID)缺失，拒绝登记' },
+                { status: 400 }
+            );
+        }
+
+        // 3. 规范化文件夹归属
         let cleanFolderId: string | null = folderId;
         if (folderId === 'null' || folderId === 'undefined' || !folderId || String(folderId).trim() === '') {
             cleanFolderId = null;
         }
 
-        const fileId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+        // 4. 提取文件后缀名
         const extension = name.includes('.') ? name.split('.').pop() : '';
-        const allUrlsStr = urls.join(',');
 
-        // 提取 Discord 消息标识符作为失效刷新锚点
-        const { channelId, messageId } = extractDiscordIdentifiers(urls[0]);
+        // 5. 将前端的多群组切片数组序列化为 JSON 字符串
+        // 结构类似于: [{"part_index":0,"tg_group_id":"-1001","tg_message_id":45}, ...]
+        const allChunksStr = JSON.stringify(chunks);
 
-        if (!channelId || !messageId) {
-            console.warn(`[Upload Commit] Failed to extract Discord identifiers from URL: ${urls[0]}`);
-        }
+        const urlsExpiredAt = 0; // Telegram 的服务器文件永不过期
+        const channelId = null;  // 已经引入多群组轮询，单频道字段弃用，保留为 null
+        const messageId = null;  // 单消息字段弃用，保留为 null
 
-        // 计算过期时间戳（保留 4 小时余量，按 20 小时缓存计算）
-        const nowInSeconds = Math.floor(Date.now() / 1000);
-        const urlsExpiredAt = nowInSeconds + (20 * 60 * 60);
-
-        // 数据入库
+        // 6. 🚀 轰炸 D1 数据库，写入永久核心索引
         await queryD1(
             'INSERT INTO files (id, name, extension, size, cdn_urls, folder_id, urls_expired_at, channel_id, message_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [fileId, name, extension, Number(size), allUrlsStr, cleanFolderId, urlsExpiredAt, channelId, messageId]
+            [
+                fileId,          // 前端生成的拟物化唯一文件 ID
+                name,            // 原始文件名 (例如: my_photo.png)
+                extension,       // 后缀名
+                Number(size),    // 文件真实总大小 (Bytes)
+                allChunksStr,    // 核心：分布式切片索引 JSON 字符串
+                cleanFolderId,   // 文件夹层级归属
+                urlsExpiredAt,   // 0 (永不过期)
+                channelId,       // null
+                messageId        // null
+            ]
         );
 
-        console.log(`[Upload Commit] File standard record created successfully. ID: ${fileId}, Name: ${name}, ChannelId: ${channelId}, MessageId: ${messageId}`);
+        console.log(`[Telegram Upload Commit] 登记成功`);
+        console.log(`ID: ${fileId} | Name: ${name} | 总大小: ${(size / 1024 / 1024).toFixed(1)}MB | 分布式切片数: ${chunks.length}`);
 
         return NextResponse.json({ success: true });
     } catch (error: any) {
-        console.error('[Upload Commit] Database insertion error:', error);
+        console.error('[Telegram Upload Commit] Database insertion error:', error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }

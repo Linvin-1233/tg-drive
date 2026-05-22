@@ -13,6 +13,11 @@ interface PreviewModalProps {
 
 export default async function PreviewModal({ fileId, fileName, fileUrl, currentDir }: PreviewModalProps) {
     let textContent = '';
+    const isDistributed = fileUrl.trim().startsWith('[') || fileUrl.trim().startsWith('{');
+    const finalImageSrc = isDistributed
+        ? `/api/video/stream?file_id=${fileId}`
+        : fileUrl;
+    const downloadProxyUrl = `/api/download?file_id=${fileId}`;
 
     // 自动洗白分片后的多媒体后缀
     const lowerName = fileName.toLowerCase();
@@ -49,8 +54,12 @@ export default async function PreviewModal({ fileId, fileName, fileUrl, currentD
                 return (
                     /* 外部钩子: pangu-preview-image-wrapper */
                     <div className="pangu-preview-image-wrapper flex justify-center items-center max-h-[70vh]">
-                        {/* 外部钩子: pangu-preview-image */}
-                        <img src={fileUrl} alt={fileName} className="pangu-preview-image max-w-full max-h-[70vh] object-contain rounded" />
+                        <img
+                            src={finalImageSrc}
+                            alt={fileName}
+                            /* 外部钩子: pangu-preview-image */
+                            className="pangu-preview-image max-w-full max-h-[70vh] object-contain rounded"
+                        />
                     </div>
                 );
 
@@ -91,10 +100,10 @@ export default async function PreviewModal({ fileId, fileName, fileUrl, currentD
             case 'doc':
             case 'pptx':
             case 'ppt':
-                const microsoftViewerUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileUrl)}`;
+                // const microsoftViewerUrl = `https://view.officeapps.live.com/op/view.aspx?src=${(fileUrl)}`;
                 return (
                     /* 外部钩子: pangu-preview-office-iframe */
-                    <iframe src={microsoftViewerUrl} className="pangu-preview-office-iframe w-full h-[70vh] border rounded" title="office-preview" />
+                    <h1 className="pangu-preview-office-iframe w-full h-[70vh] border rounded" title="office-preview">目前还不支持office文件预览，敬请期待</h1>
                 );
 
             case 'txt':
@@ -129,7 +138,7 @@ export default async function PreviewModal({ fileId, fileName, fileUrl, currentD
             case 'pdf':
                 return (
                     /* 外部钩子: pangu-preview-pdf-unsupported */
-                    <h1 className="pangu-preview-pdf-unsupported">Currently PDF preview is not supported, s∞n!</h1>
+                    <h1 className="pangu-preview-pdf-unsupported">目前还不支持pdf预览, s∞n!</h1>
                 );
 
             default:
@@ -137,7 +146,7 @@ export default async function PreviewModal({ fileId, fileName, fileUrl, currentD
                     /* 外部钩子: pangu-preview-unsupported-wrapper */
                     <div className="pangu-preview-unsupported-wrapper text-center py-10">
                         <p className="text-sm text-gray-500 mb-4">⚠️ 该文件格式（.${ext}）暂不支持直接预览</p>
-                        <a href={fileUrl} target="_blank" rel="noreferrer" className="pangu-preview-unsupported-download text-xs bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700">
+                        <a href={downloadProxyUrl} target="_blank" rel="noreferrer" className="pangu-preview-unsupported-download text-xs bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700">
                             在新标签页中打开/下载
                         </a>
                     </div>
