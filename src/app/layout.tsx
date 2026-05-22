@@ -8,8 +8,13 @@ import path from 'path';
 import yaml from 'js-yaml';
 
 export const metadata: Metadata = {
-    title: "私人文件存储",
-    description: "基于 Next.js 16 + Tailwind v4 的极客网盘",
+    title: "tg-netdisk",
+    description: "基于 Next.js 16 + Tailwind v4 的个人网盘",
+    icons:{
+        icon: '/icon/favicon.png',
+        shortcut: '/icon/favicon.png',
+        apple: '/icon/favicon.png',
+    }
 };
 
 export default function RootLayout({
