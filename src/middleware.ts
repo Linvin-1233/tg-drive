@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
         pathname.startsWith('/_next') ||
         pathname.startsWith('/static') ||
         pathname.startsWith('/themes') ||
-        pathname.startsWith('/api/auth') || // ⚡ 必须完全放行这个前缀
+        pathname.startsWith('/api/auth') ||
         pathname === '/login' ||
         pathname === '/favicon.ico' ||
         pathname.includes('.')
