@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
 };
 
-export default nextConfig;
+if (process.env.NODE_ENV === "development" && !process.env.VERCEL) {
+  import('@opennextjs/cloudflare')
+    .then(m => m.initOpenNextCloudflareForDev())
+    .catch(err => console.error("Cloudflare dev init failed:", err));
+}
 
-import('@opennextjs/cloudflare').then(m => m.initOpenNextCloudflareForDev());
+export default nextConfig;
