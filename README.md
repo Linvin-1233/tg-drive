@@ -21,7 +21,8 @@
 6. 获得你的cloudflare账户id，这一步只需打开cloudflare，并点开workers 和 pages，找到下图即可
     ![account](README/images/img.png)
 7. 创建D1 SQL数据库
-    - 请在侧边栏找到D1 SQL数据库 ![sql](README/images/img_1.png)
+    - 请在侧边栏找到D1 SQL数据库 
+      ![sql](README/images/img_1.png)
     - 点击创建数据库，地区默认即可（国内请选择亚太地区）
     - 创建好后点击探索数据，并在Query下输入以下代码
     ```sql
@@ -43,10 +44,13 @@
     parent_id TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, is_locked INTEGER DEFAULT 0, password_hash TEXT)
      ```
-   - 完成这一步后，复制你的d1 api ![copy](README/images/img_3.png)
+   - 完成这一步后，复制你的d1 api  
+     ![copy](README/images/img_3.png)
 8. 创建你的cloudflare api令牌
-    - 请在侧边栏找到账户api令牌 ![api token](README/images/img_4.png)
-    - 创建一个令牌，无过期时间，权限勾选如图即可 ![bruh](README/images/img_5.png)
+    - 请在侧边栏找到账户api令牌 
+      ![api token](README/images/img_4.png)
+    - 创建一个令牌，无过期时间，权限勾选如图即可 
+      ![bruh](README/images/img_5.png)
     - 复制保存
 9. 将上述操作获取的令牌存入env文件中
     ```
