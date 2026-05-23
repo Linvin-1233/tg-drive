@@ -24,7 +24,6 @@ export async function GET(request: NextRequest) {
         });
     } catch (e) {
         console.error("D1 check error:", e);
-        // ⚡ 哪怕报错分支，也绝对不能漏掉 NextResponse.json，否则就会报 "received 'Object'" 错误
         return NextResponse.json({ isLocked: false, error: String(e) }, { status: 500 });
     }
 }
