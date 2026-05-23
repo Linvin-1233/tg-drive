@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+import { compare } from 'bcrypt-ts';
 
 interface D1Row { password_hash: string; }
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
             console.warn(`[Verify] 找不到文件夹或未加锁。ID: ${folderId}`);
             return NextResponse.json({ error: '文件夹未受保护或不存在' }, { status: 404 });
         }
-        const isValid = await bcrypt.compare(password, folder.password_hash);
+        const isValid = await compare(password, folder.password_hash);
 
         if (isValid) {
             const res = NextResponse.json({ success: true });
