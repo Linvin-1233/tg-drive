@@ -1,4 +1,5 @@
 # tg-netdisk
+![logo](README/images/logo.gif)
 
 基于 Telegram Bot + Next.js 的私人 / 家庭网盘系统
 
@@ -40,7 +41,7 @@ https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates
 ```json
 {
   "chat": {
-    "id": -100....., //这里是你的群组id
+    "id": -100.....,      //这里是你的群组id
     "title": "你的群组",
     "type": "supergroup"
   }
